@@ -1,0 +1,79 @@
+#!/bin/bash
+
+#this is a tool wich retrieves a url or a video from local storage
+#and makes different editing actions on it
+
+#import ansi library
+source ansi
+
+mkdir -p dowloaded_videos
+mkdir -p concatenated_videos
+mkdir -p mini_clips
+
+#ask user if gives a url or a video
+ansi --bg-color=217 --color=52 --bold "Would you like to provide a URL or a local video file? (url/file)"
+read choice
+if [ "$choice" = "url" ]; then
+    ansi --bg-color=217 --color=52 --bold "Please enter the URL:"
+    read url
+    filename=$(yt-dlp --get-filename -o "%(id)s.%(ext)s" "$url")
+    yt-dlp -o "dowloaded_videos/%(id)s.%(ext)s" "$url"
+elif [ "$choice" = "file" ]; then
+    ansi --bg-color=217 --color=52 --bold "Please enter the path to the local video file:"
+    read filepath
+    filename=$(basename "$filepath")
+    ansi --bg-color=217 --color=52 --bold "Using $filename"
+else
+    ansi --bg-color=217 --color=52 --bold "Invalid choice. Exiting."
+    exit 1
+fi
+
+#ask user how many clips to extract
+ansi --bg-color=217 --color=52 --bold "How many clips do you want to extract?"
+read num_clips
+
+#ask user to specify the start end of each frame
+#initialize an array to store start and end times for each frame
+declare -a frame_times
+
+#loop through each frame to get start and end times
+for ((i=1; i<=$num_clips; i++)); do
+    ansi --bg-color=217 --color=52 --bold "Frame $i:"
+    ansi --bg-color=217 --color=52 --bold "Please enter the start time in format mm:ss (e.g., 00:10):"
+    read start_time
+    ansi --bg-color=217 --color=52 --bold "Please enter the end time in format mm:ss (e.g., 00:20):"
+    read end_time
+
+    ansi --bg-color=217 --color=52 --bold frame_times[$i]="Start: $start_time, End: $end_time"
+    ansi --bg-color=217 --color=52 --bold "Frame $i: ${frame_times[$i]}"
+    if [ "$choice" = "url" ]; then 
+        ansi --bg-color=217 --color=17 --bold "Your clips are creating..."
+        ffmpeg -i "dowloaded_videos/$filename" -ss "$start_time" -to "$end_time" -c copy "mini_clips/${filename}frame-$i.mp4"
+    elif [ "$choice" = "file" ]; then
+        ansi --bg-color=217 --color=17 --bold "Your clips are creating..."
+        ffmpeg -i "$filepath" -ss "$start_time" -to "$end_time" -c copy "mini_clips/${filename}frame-$i.mp4"
+    fi 
+done
+
+
+#loop through each file in mini_clips and concatenate with ffmpeg
+#clear the content of index file
+base_filename="${filename%.*}"
+
+rm -f index
+touch index
+
+for file in mini_clips/*.mp4; do
+    if [[ "$file" == "mini_clips/${base_filename}"* ]]; then
+        echo "file '$file'" >> index
+    fi
+done
+
+
+ansi --bg-color=17 --color=33 --bold  "Your video is creating..."
+ffmpeg -f concat -safe 0 -i index -c copy "concatenated_videos/$filename".mp4
+ansi --bg-color=17 --color=33 --bold  "Your video has been created successfully!"
+
+
+
+
