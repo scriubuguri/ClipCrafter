@@ -55,3 +55,7 @@ for item1, item2, item3 in zip(start_times, end_times, full_words):
 
 with open(output_file, 'w') as output_file:
     output_file.writelines(output_lines)
+
+with open("full_words", "w") as file:
+    for word in full_words:
+        file.write(word + "\n")
