@@ -1,0 +1,19 @@
+#!/bin/bash
+
+input_file="$1"
+
+output_dir="word_images"
+mkdir -p "$output_dir"
+
+# Split text into words and output each word to an image
+counter=0
+for word in $(cat "$input_file"); do
+((counter++))
+image_file="${output_dir}/word_${counter}.png"
+
+convert -size 800x200 xc:white \
+	-gravity center \
+	-pointsize 24 \
+	-annotate +0+0 "$word" \
+	"$image_file"
+done
