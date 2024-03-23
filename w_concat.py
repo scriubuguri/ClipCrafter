@@ -59,3 +59,11 @@ with open(output_file, 'w') as output_file:
 with open("full_words", "w") as file:
     for word in full_words:
         file.write(word + "\n")
+
+timestamps = []
+for i, j in zip(start_times,end_times):
+    timestamps.append(f"{i} {j}\n")
+
+with open("timestamps", "w") as file:
+    for times in timestamps:
+        file.write(times)
