@@ -60,10 +60,29 @@ with open("full_words", "w") as file:
     for word in full_words:
         file.write(word + "\n")
 
-timestamps = []
-for i, j in zip(start_times,end_times):
-    timestamps.append(f"{i} {j}\n")
+regex = r"\d{2}:\d{2}:(\d{2}\.\d{3})"
+
+startt = []
+endt = []
+
+for i in start_times:
+    match = re.search(regex, i)
+    if match:
+        seconds = match.group(1)
+        startt.append(seconds)
+
+
+for j in end_times:
+    match = re.search(regex, j)
+    if match:
+        mseconds = match.group(1)
+        endt.append(mseconds)
+
+timestampsi = []
+for i, j in zip(startt,endt):
+    timestampsi.append(f"{i} {j}\n")
+
 
 with open("timestamps", "w") as file:
-    for times in timestamps:
+    for times in timestampsi:
         file.write(times)
