@@ -11,9 +11,11 @@ for word in $(cat "$input_file"); do
 ((counter++))
 image_file="${output_dir}/word_${counter}.png"
 
-convert -size 800x200 xc:white \
+convert -size 250x100 xc:none \
 	-gravity center \
-	-pointsize 24 \
+	-fill black \
+	-pointsize 68 \
+	-weight Bold \
 	-annotate +0+0 "$word" \
 	"$image_file"
 done
