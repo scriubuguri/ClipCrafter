@@ -1,9 +1,17 @@
 from subprocess import call
 import sys
+import os
 
-input_video = sys.argv[1]
+director_curent = os.getcw()
 
-with open("timestamps", mode="r", encoding="utf-8") as f:
+for file in os.listdir(director_curent):
+    if file.endswith(".mp4"):
+        new_name = file.split(".webm")[0] + "1.mp4"
+        os.rename(file, new_name)
+
+input_video = new_name.rstrip(".mp4")[:-1]
+
+with open("timestamps.txt", mode="r", encoding="utf-8") as f:
     timestamps = f.read()
 
 timestamps = timestamps.split("\n")
@@ -18,4 +26,4 @@ for wordnumber, timestamp in enumerate(timestamps, start=1):
     call(command, shell=True)
 
     if wordnumber > 1:
-        call(f"rm {input_video}{wordnumber}.webm", shell=True)
+        call(f"rm {input_video}{wordnumber}.mp4", shell=True)
