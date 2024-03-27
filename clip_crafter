@@ -17,6 +17,8 @@ if [ "$choice" = "url" ]; then
     ansi --bg-color=217 --color=52 --bold "Please enter the URL:"
     read url
     filename=$(yt-dlp --get-filename -o "%(id)s.%(ext)s" "$url")
+    foldername=$(yt-dlp --get-filename -o "%(id)s" "$url")
+    mkdir -p concatenated_videos/"$foldername"
     yt-dlp -o "dowloaded_videos/%(id)s.%(ext)s" "$url"
 elif [ "$choice" = "file" ]; then
     ansi --bg-color=217 --color=52 --bold "Please enter the path to the local video file:"
@@ -46,13 +48,13 @@ for ((i=1; i<=$num_clips; i++)); do
 
     ansi --bg-color=217 --color=52 --bold frame_times[$i]="Start: $start_time, End: $end_time"
     ansi --bg-color=217 --color=52 --bold "Frame $i: ${frame_times[$i]}"
-    if [ "$choice" = "url" ]; then 
+    if [ "$choice" = "url" ]; then
         ansi --bg-color=217 --color=17 --bold "Your clips are creating..."
         ffmpeg -i "dowloaded_videos/$filename" -ss "$start_time" -to "$end_time" -c copy "mini_clips/${filename}frame-$i.mp4"
     elif [ "$choice" = "file" ]; then
         ansi --bg-color=217 --color=17 --bold "Your clips are creating..."
         ffmpeg -i "$filepath" -ss "$start_time" -to "$end_time" -c copy "mini_clips/${filename}frame-$i.mp4"
-    fi 
+    fi
 done
 
 
@@ -71,9 +73,5 @@ done
 
 
 ansi --bg-color=17 --color=33 --bold  "Your video is creating..."
-ffmpeg -f concat -safe 0 -i index -c copy "concatenated_videos/$filename".mp4
+ffmpeg -f concat -safe 0 -i index -c copy "concatenated_videos/$foldername/$filename".mp4
 ansi --bg-color=17 --color=33 --bold  "Your video has been created successfully!"
-
-
-
-

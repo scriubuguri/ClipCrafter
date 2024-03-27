@@ -1,8 +1,11 @@
 import sys
 import re
+import os
+import shutil
 
 input_file = sys.argv[1]
 output_file = sys.argv[2]
+chosen_folder = sys.argv[3]
 
 all_words = []
 with open(input_file, 'r') as file:
@@ -84,6 +87,8 @@ for i, j in zip(startt,endt):
     timestampsi.append(f"{i} {j}\n")
 
 
-with open("timestamps", "w") as file:
+with open("timestamps.txt", "w") as file:
     for times in timestampsi:
         file.write(times)
+
+shutil.move("timestamps.txt", chosen_folder)
