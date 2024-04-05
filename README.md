@@ -74,7 +74,7 @@ chmod +x pic_generator.sh
 ```
 
 ```bash
-./pic_generator.sh full_words path/to/your/concatenatedvideo
+./pic_generator full_words path/to/your/concatenatedvideo
 ```
 
 10. Move the `overlay_w_img.py` in the folder where you have the video and run it to add captions on it
